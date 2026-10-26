@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Microsoft 365 - Sign into Copilot</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',sans-serif;background:#fff;color:#242424;}
+
+/* HEADER */
+header{
+  background:#fff;border-bottom:1px solid #e0e0e0;
+  height:54px;display:flex;align-items:center;
+  padding:0 24px;position:sticky;top:0;z-index:200;
+  justify-content:space-between;
+  font-family:'Segoe UI',Arial,sans-serif;
+  font-size:13px;color:rgb(38,38,38);
+}
+.hdr-left{display:flex;align-items:center;}
+.hdr-mslogo{display:flex;align-items:center;width:137px;height:54px;flex-shrink:0;}
+.hdr-pipe{width:1px;height:18px;background:#ccc;margin:0 0;}
+.hdr-brand{font-size:13px;color:rgb(38,38,38);font-weight:400;text-decoration:none;width:129px;height:54px;display:flex;align-items:center;padding-left:18px;white-space:nowrap;}
+.hdr-nav{display:flex;align-items:center;height:54px;}
+.hdr-nav button{
+  background:transparent;border:none;border-bottom:1px solid transparent;
+  color:rgb(38,38,38);font-family:inherit;font-size:13px;font-weight:400;
+  padding:16px 12px;cursor:pointer;outline:none;
+  display:inline-flex;align-items:center;gap:4px;
+  height:51px;white-space:nowrap;
+  transition:all .15s ease;
+}
+.hdr-nav button:hover{background:rgba(0,0,0,.05);border-bottom-color:rgb(38,38,38);}
+.hdr-nav button:focus-visible{outline:3px solid rgb(38,38,38);outline-offset:2px;}
+.hdr-nav-buy{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:31px;padding:0 10px;
+  border:1px solid rgb(38,38,38);border-radius:3px;
+  background:transparent;color:rgb(38,38,38);
+  font-family:inherit;font-size:13px;font-weight:600;
+  text-decoration:none;white-space:nowrap;cursor:pointer;
+  margin-left:4px;
+}
+.hdr-nav-buy:hover{border-color:#000;border-width:2px;}
+.hdr-right{display:flex;align-items:center;}
+.hdr-allms{
+  background:transparent;border:none;border-bottom:1px solid transparent;
+  color:rgb(38,38,38);font-family:inherit;font-size:13px;font-weight:400;
+  cursor:pointer;display:inline-flex;align-items:center;
+  gap:4px;height:54px;padding:0 12px;white-space:nowrap;
+  transition:all .15s ease;outline:none;
+}
+.hdr-allms:hover{background:rgba(0,0,0,.05);border-bottom-color:rgb(38,38,38);}
+.hdr-signin-icon{
+  width:48px;height:48px;border-radius:50%;
+  border:none;background:transparent;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s ease;outline:none;
+}
+.hdr-signin-icon:hover{background:rgba(0,0,0,.05);}
+
+/* HERO */
+.hero{
+  background:linear-gradient(180deg,#c8eaf5 0%,#dff0f7 40%,#eef7fb 70%,#f5fbfd 100%);
+  min-height:620px;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:100px 24px 80px;
+}
+.hero-inner{max-width:860px;}
+.hero h1{
+  font-size:80px;font-weight:400;line-height:1.1;color:#000;
+  margin-bottom:28px;font-family:'Segoe UI',sans-serif;
+  letter-spacing:-1.8px;
+}
+.hero h1 em{
+  font-style:italic;font-weight:400;
+  font-family:'Georgia','Times New Roman',serif;
+  letter-spacing:-1.8px;
+}
+.hero h1 .sans{font-family:'Segoe UI',sans-serif;font-weight:400;}
+.hero-icons-row{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;margin:0 2px;}
+.hero-icons-row img{width:52px;height:52px;}
+.hero-copilot-row{display:inline-flex;align-items:center;gap:4px;vertical-align:middle;}
+.hero-copilot-row img{width:44px;height:44px;}
+.hero p{font-size:16px;color:#616161;margin-bottom:44px;line-height:1.5;letter-spacing:-0.48px;font-family:'Segoe UI',sans-serif;}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.btn-signin-hero{padding:0 28px;height:50px;background:#000;color:#fff;border:2px solid #000;border-radius:16px;font-size:14px;font-weight:600;letter-spacing:-0.3px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;}
+.btn-signin-hero:hover{background:#333;border-color:#333;}
+.btn-buy-hero{padding:0 28px;height:50px;background:transparent;color:#000;border:2px solid #000;border-radius:16px;font-size:14px;font-weight:600;letter-spacing:-0.3px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;}
+.btn-buy-hero:hover{background:rgba(0,0,0,.05);}
+
+/* SECTIONS COMMON */
+.section{padding:56px 120px;background:#fff;}
+.section-title{font-size:36px;font-weight:600;color:#121d2f;margin-bottom:32px;line-height:1.15;font-family:'Segoe UI',sans-serif;letter-spacing:-1px;}
+
+/* PROMPTS */
+.prompts-wrap{position:relative;}
+.prompts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+.prompt-card{
+  border:1px solid rgba(0,0,0,.13);border-radius:24px;padding:20px;
+  cursor:pointer;text-decoration:none;display:flex;flex-direction:column;
+  background:#fff;transition:box-shadow .2s,transform .2s;min-height:180px;
+}
+.prompt-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.12);transform:translateY(-2px);}
+.prompt-card:hover .prompt-cta-icon{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.prompt-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.prompt-head img{width:22px;height:22px;}
+.prompt-head h3{font-size:17px;font-weight:600;color:#121d2f;letter-spacing:-0.6px;font-family:'Segoe UI',sans-serif;}
+.prompt-card p{font-size:14px;color:#555;line-height:1.6;flex:1;margin-bottom:16px;font-family:'Segoe UI',sans-serif;}
+.prompt-cta-row{display:flex;align-items:center;gap:8px;font-size:14px;color:#1a1a1a;font-weight:400;border-top:1px solid #e8e8e8;padding-top:14px;font-family:'Segoe UI',sans-serif;}
+.prompt-cta-icon{width:24px;height:24px;border:1px solid #ccc;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;transition:background .2s,color .2s,border-color .2s;}
+.carousel-nav-row{display:flex;gap:12px;align-items:center;}
+.carousel-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid #ccc;background:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,box-shadow .2s;}
+.carousel-btn:hover:not(:disabled){background:#f0f0f0;border-color:#888;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+.carousel-btn:disabled{opacity:.35;cursor:default;}
+.carousel-btn.active{border-color:#1a1a1a;}
+
+/* APPS */
+.apps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px;}
+.app-card{
+  border:1px solid rgba(0,0,0,.13);border-radius:24px;padding:20px;
+  cursor:pointer;text-decoration:none;display:flex;flex-direction:column;
+  background:#fff;transition:box-shadow .2s,transform .2s;
+}
+.app-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.12);transform:translateY(-2px);}
+.app-card:hover .app-cta-icon{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.app-icon-wrap{margin-bottom:16px;}
+.app-icon-wrap img{width:48px;height:48px;}
+.app-card h3{font-size:17px;font-weight:600;color:#121d2f;margin-bottom:8px;letter-spacing:-0.6px;font-family:'Segoe UI',sans-serif;}
+.app-card p{font-size:14px;color:#616161;line-height:1.6;letter-spacing:-0.48px;flex:1;margin-bottom:16px;font-family:'Segoe UI',sans-serif;}
+.app-cta{display:flex;align-items:center;gap:8px;font-size:14px;color:#1a1a1a;font-weight:400;border-top:1px solid #e8e8e8;padding-top:14px;margin-top:auto;font-family:'Segoe UI',sans-serif;}
+.app-cta-icon{width:24px;height:24px;border:1px solid #ccc;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;transition:background .2s,color .2s,border-color .2s;}
+.view-all-link{display:block;text-align:right;font-size:14px;color:#1a1a1a;text-decoration:underline;cursor:pointer;margin-top:8px;font-family:'Segoe UI',sans-serif;}
+
+/* AI TOOLS */
+.ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.ai-card{
+  border:1px solid rgba(0,0,0,.13);border-radius:24px;overflow:hidden;
+  cursor:pointer;text-decoration:none;background:#fff;
+  transition:box-shadow .2s,transform .2s;display:flex;flex-direction:column;
+}
+.ai-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.12);transform:translateY(-2px);}
+.ai-card:hover .ai-cta-icon{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.ai-card-img{background:#f5f3ee;height:200px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.ai-card-img img{width:100%;height:100%;object-fit:cover;}
+.ai-card-body{padding:20px;flex:1;display:flex;flex-direction:column;}
+.ai-card-body h3{font-size:18px;font-weight:600;color:#121d2f;margin-bottom:8px;letter-spacing:-0.6px;font-family:'Segoe UI',sans-serif;}
+.ai-card-body p{font-size:14px;color:#0078d4;line-height:1.6;flex:1;margin-bottom:16px;font-family:'Segoe UI',sans-serif;}
+.ai-cta{display:flex;align-items:center;gap:8px;font-size:14px;color:#1a1a1a;font-weight:400;border-top:1px solid #e8e8e8;padding-top:14px;margin-top:auto;font-family:'Segoe UI',sans-serif;}
+.ai-cta-icon{width:24px;height:24px;border:1px solid #ccc;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;transition:background .2s,color .2s,border-color .2s;}
+
+/* DOWNLOAD */
+.dl-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.dl-box{border:1px solid rgba(0,0,0,.13);border-radius:24px;overflow:hidden;display:flex;background:#f5f3ee;transition:box-shadow .2s,transform .2s;}
+.dl-box:hover{box-shadow:0 4px 20px rgba(0,0,0,.1);transform:translateY(-2px);}
+.dl-img{width:260px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:20px;}
+.dl-img img{max-width:100%;max-height:200px;object-fit:contain;}
+.dl-content{padding:28px 24px;display:flex;flex-direction:column;justify-content:center;}
+.dl-content h3{font-size:28px;font-weight:600;color:#121d2f;margin-bottom:10px;line-height:1.15;letter-spacing:-1px;font-family:'Segoe UI',sans-serif;}
+.dl-content p{font-size:14px;color:#0078d4;line-height:1.6;margin-bottom:20px;font-family:'Segoe UI',sans-serif;}
+.dl-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.dl-btn-black{padding:10px 20px;background:#1a1a1a;color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;}
+.dl-btn-black:hover{background:#333;}
+.store-badge{height:40px;cursor:pointer;}
+
+/* FAQ */
+.faq-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;}
+.faq-expand-btn{padding:10px 20px;background:#fff;border:1.5px solid #1a1a1a;color:#1a1a1a;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;}
+.faq-expand-btn:hover{background:#f5f5f5;}
+.faq-item{border-top:1px solid #e0e0e0;}
+.faq-item:last-of-type{border-bottom:1px solid #e0e0e0;}
+.faq-row{display:flex;align-items:center;padding:20px 0;gap:24px;cursor:pointer;transition:background .15s;border-radius:8px;padding-left:4px;padding-right:4px;}
+.faq-row:hover{background:#f9f9f9;}
+.faq-num{font-size:14px;color:#888;min-width:56px;font-family:'Segoe UI',sans-serif;}
+.faq-q{font-size:17px;font-weight:600;color:#121d2f;flex:1;letter-spacing:-0.6px;font-family:'Segoe UI',sans-serif;}
+.faq-toggle{width:36px;height:36px;border-radius:8px;background:#1a1a1a;border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.faq-answer{font-size:14px;color:#7a5c00;line-height:1.8;padding:0 0 24px 80px;display:none;font-family:'Segoe UI',sans-serif;}
+.faq-answer.open{display:block;}
+.faq-answer a{color:#0078d4;}
+.faq-footer-note{font-size:13px;color:#7a5c00;margin-top:28px;font-family:'Segoe UI',sans-serif;}
+.faq-footer-note a{color:#0078d4;}
+
+/* FOOTER */
+footer{background:#fff;border-top:1px solid #e0e0e0;padding:20px 120px;}
+.footer-top{display:flex;align-items:center;gap:24px;flex-wrap:wrap;font-size:13px;color:#555;margin-bottom:12px;font-family:'Segoe UI',sans-serif;}
+.footer-top a{color:#555;text-decoration:none;}
+.footer-top a:hover{text-decoration:underline;}
+.footer-globe{display:flex;align-items:center;gap:6px;}
+.footer-bottom{font-size:12px;color:#888;line-height:1.7;font-family:'Segoe UI',sans-serif;}
+.footer-bottom a{color:#0078d4;}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.signin-box{background:#fff;width:440px;border-radius:4px;box-shadow:0 8px 32px rgba(0,0,0,.2);animation:fadeUp .2s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.sbox-head{padding:28px 32px 0;}
+.sbox-msrow{display:flex;align-items:center;gap:8px;margin-bottom:20px;}
+.sbox-msrow span{font-size:14px;font-weight:600;color:#242424;}
+.sbox-head h2{font-size:22px;font-weight:600;color:#242424;margin-bottom:6px;}
+.sbox-head p{font-size:13px;color:#242424;margin-bottom:20px;}
+.sbox-head p a{color:#0078d4;text-decoration:none;}
+.sbox-body{padding:0 32px 28px;}
+.sbox-input{width:100%;padding:10px 12px;border:1px solid #8a8886;border-radius:2px;font-size:15px;color:#242424;outline:none;margin-bottom:4px;}
+.sbox-input:focus{border-color:#0078d4;border-width:2px;}
+.sbox-hint{font-size:12px;color:#616161;margin-bottom:20px;}
+.sbox-hint a{color:#0078d4;text-decoration:none;}
+.sbox-legal{font-size:12px;color:#616161;margin-bottom:20px;line-height:1.5;}
+.sbox-legal a{color:#0078d4;text-decoration:none;}
+.sbox-actions{display:flex;justify-content:flex-end;gap:10px;}
+.sbox-back{padding:8px 20px;background:#fff;color:#242424;border:1px solid #8a8886;border-radius:2px;font-size:14px;cursor:pointer;}
+.sbox-next{padding:8px 20px;background:#0078d4;color:#fff;border:none;border-radius:2px;font-size:14px;font-weight:600;cursor:pointer;}
+.sbox-next:hover{background:#106ebe;}
+.email-row{display:flex;align-items:center;gap:8px;border:1px solid #e5e5e5;border-radius:2px;padding:8px 12px;margin-bottom:20px;cursor:pointer;font-size:14px;color:#242424;}
+.email-row:hover{background:#f5f5f5;}
+.email-av{width:28px;height:28px;border-radius:50%;background:#0078d4;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.err{color:#a4262c;font-size:12px;margin-bottom:8px;display:none;}
+.err.show{display:block;}
+.step2{display:none;}
+.step2.show{display:block;}
+.step1.hide{display:none;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr-left">
+    <a class="hdr-mslogo" href="#">
+      <svg width="23" height="23" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#f25022"/><rect x="12" y="1" width="10" height="10" fill="#7fba00"/><rect x="1" y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/></svg>
+      <span style="font-size:13px;color:rgb(38,38,38);margin-left:8px;">Microsoft</span>
+    </a>
+    <div class="hdr-pipe"></div>
+    <a class="hdr-brand" href="#">Microsoft 365</a>
+    <nav class="hdr-nav">
+      <button>Products <span style="font-size:10px;">&#8964;</span></button>
+      <button>Features <span style="font-size:10px;">&#8964;</span></button>
+      <button>Download <span style="font-size:10px;">&#8964;</span></button>
+      <button>Support <span style="font-size:10px;">&#8964;</span></button>
+      <a class="hdr-nav-buy" href="#">Buy Microsoft 365</a>
+    </nav>
+  </div>
+  <div class="hdr-right">
+    <button class="hdr-allms">All Microsoft <span style="font-size:10px;">&#8964;</span></button>
+    <button class="hdr-signin-icon" onclick="openSignin()" title="Sign in">
+      <svg width="20" height="20" viewBox="0 0 16 16" fill="rgb(38,38,38)"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1c-2.67 0-8 1.34-8 4v1h16v-1c0-2.66-5.33-4-8-4z"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <h1>
+      <em>Work smarter</em> <span class="sans">across</span><br/>
+      <span class="sans">Microsoft 365</span><br/>
+      <span class="hero-icons-row">
+        <img src="https://res.cdn.office.net/officehub/images/content/images/unauth-odc/word-icon-a0719c261c.svg" alt="Word"/>
+        <img src="https://res.cdn.office.net/officehub/images/content/images/unauth-odc/excel-icon-058c14383a.svg" alt="Excel"/>
+        <img src="https://res.cdn.office.net/officehub/images/content/images/unauth-odc/powerpoint-icon-1c34216af9.svg" alt="PowerPoint"/>
+      </span>
+      <span class="sans">with</span>
+      <span class="hero-copilot-row">
+        <img src="https://res.cdn.office.net/officehub/images/content/images/unauth-mcm/new-hero-copilot-d29d67197c.png" alt="Copilot"/><span class="sans">Copilot</span>
+      </span>
+    </h1>
+    <p>Microsoft 365 brings your work together, with AI to help you create,<br/>collaborate, and stay on track.</p>
+    <div class="hero-btns">
+      <a class="btn-signin-hero" href="#" onclick="openSignin();return false;">Sign in</a>
+      <a class="btn-buy-hero" href="#">Buy Microsoft 365</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROMPTS -->
+<section class="section">
+  <div class="section-title">Popular prompts to try</div>
+  <div class="prompts-grid" id="promptsGrid">
+    <a class="prompt-card" href="#" onclick="openSignin();return false;">
+      <div class="prompt-head"><img src="https://res.cdn.office.net/officehub/images/content/images/unauth-mcm/new-hero-copilot-d29d67197c.png" alt=""/><h3>Improve my writing</h3></div>
+      <p>Rewrite this text to make it more professional and less verbose.</p>
+      <div class="prompt-cta-row"><div class="prompt-cta-icon">&#8250;</div> Try this prompt</div>
+    </a>
+    <a class="prompt-card" href="#" onclick="openSignin();return false;">
+      <div class="prompt-head"><img src="https://res.cdn.office.net/officehub/images/content/images/unauth-mcm/new-hero-copilot-d29d67197c.png" alt=""/><h3>Create an image</h3></div>
+      <p>Design an image of a drawing of a database in colored pencil.</p>
+      <div class="prompt-cta-row"><div class="prompt-cta-icon">&#8250;</div> Try this prompt</div>
+    </a>
+    <a class="prompt-card" href="#" onclick="openSignin();return false;">
+      <div class="prompt-head"><img src="https://res.cdn.office.net/officehub/images/content/images/unauth-mcm/new-hero-copilot-d29d67197c.png" alt=""/><h3>Understand what is changed</h3></div>
+      <p>List recent activity in /file</p>
+      <div class="prompt-cta-row"><div class="prompt-cta-icon">&#8250;</div> Try this prompt</div>
+    </a>
+    <a class="prompt-card" href="#" onclick="openSignin();return false;" style="display:none;" data-extra>
+      <div class="prompt-head"><img src="https://res.cdn.office.net/officehub/images/content/images/unauth-mcm/new-hero-copilot-d29d67197c.png" alt=""/><h3>Visualize my data</h3></div>
+      <p>Create a bar chart of [energy consumption for the top 5 energy consuming countries].</p>
+      <div class="prompt-cta-row"><div class="prompt-cta-icon">&#8250;</div> Try this prompt</div>
+    </a>
+    <a class="prompt-card" href="#" onclick="openSignin();return false;" style="display:none;" data-extra>
+      <div class="prompt-head"><img src="https://res.cdn.office.net/officehub/images/content/images/unauth-mcm/new-hero-copilot-d29d67197c.png" alt=""/><h3>Interview prep</h3></div>
+      <p>Create a set of interview questions for the position of [Software Engineer].</p>
+      <div class="prompt-cta-row"><div class="prompt-cta-icon">&#8250;</div> Try this prompt</div>
+    </a>
+    <a class="prompt-card" href="#" onclick="openSignin();return false;" style="display:none;" data-extra>
+      <div class="prompt-head"><img src="https://res.cdn.office.net/officehub/images/content/images/unauth-mcm/new-hero-copilot-d29d67197c.png" alt=""/><h3>Find my calm</h3></div>
+      <p>What are some ways to reduce stress?</p>
+      <div class="prompt-cta-row"><div class="prompt-cta-icon">&#8250;</div> Try this prompt</div>
+    </a>
+  </div>
+  <div class="carousel-nav-row">
+    <button class="carousel-btn" id="prevBtn" disabled onclick="carouselPrev()">&#8592;</button>
+    <button class="carousel-btn active" id="nextBtn" onclick="carouselNext()">&#8594;</button>
+  </div>
+</section>
+
+<!-- APPS -->
+<section class="section" style="background:#fff;">
+  <div class="section-title">Jump into your favorite app</div>
+  <div class="apps-grid">
+    <a class="app-card" href="https://word.cloud.microsoft/">
+      <div class="app-icon-wrap"><img src="https://res.cdn.office.net/officehub/images/content/images/unauth-odc/word-icon-a0719c261c.svg" alt="Word"/></div>
+      <h3>Word with Copilot</h3>
+      <p>Draft smarter and finish faster.</p>
+      <div class="app-cta"><div class="app-cta-icon">&#8250;</div> Open Word</div>
+    </a>
+    <a class="app-card" href="https://excel.cloud.microsoft/">
+      <div class="app-icon-wrap"><img src="https://res.cdn.office.net/officehub/images/content/images/unauth-odc/excel-icon-058c14383a.svg" alt="Excel"/></div>
+      <h3>Excel with Copilot</h3>
+      <p>Unlock insights and make informed decisions.</p>
+      <div class="app-cta"><div class="app-cta-icon">&#8250;</div> Open Excel</div>
+    </a>
+    <a class="app-card" href="https://powerpoint.cloud.microsoft/">
+      <div class="app-icon-wrap"><img src="https://res.cdn.office.net/officehub/images/content/images/unauth-odc/powerpoint-icon-1c34216af9.svg" alt="PowerPoint"/></div>
+      <h3>PowerPoint with Copilot</h3>
+      <p>Turn ideas into polished presentations.</p>
+      <div class="app-cta"><div class="app-cta-icon">&#8250;</div> Open PowerPoint</div>
+    </a>
+    <a class="app-card" href="https://outlook.cloud.microsoft/">
+      <div class="app-icon-wrap">
+        <svg width="48" height="48" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#0078d4"/><text x="10" y="34" font-size="22" font-weight="700" fill="#fff" font-family="Segoe UI">O</text></svg>
+      </div>
+      <h3>Outlook with Copilot</h3>
+      <p>Move work forward with email and calendar.</p>
+      <div class="app-cta"><div class="app-cta-icon">&#8250;</div> Open Outlook</div>
+    </a>
+  </div>
+  <a class="view-all-link" href="#">View all apps</a>
+</section>
+
+<!-- AI TOOLS -->
+<section class="section">
+  <div class="section-title">AI tools to search, chat, create, and stay in the flow</div>
+  <div class="ai-grid">
+    <a class="ai-card" href="#">
+      <div class="ai-card-img" style="background:#f0ede8;align-items:flex-end;padding:20px;">
+        <div style="background:#fff;border-radius:24px;padding:10px 16px;display:flex;align-items:center;gap:10px;width:100%;box-shadow:0 2px 8px rgba(0,0,0,.1);">
+          <span style="font-size:13px;color:#888;">+ Ask Copilot</span>
+          <span style="margin-left:auto;font-size:18px;">🎤</span>
+        </div>
+      </div>
+      <div class="ai-card-body">
+        <h3>Get started with chat</h3>
+        <p>Think through projects, summarize information, and keep work moving forward in one conversation.</p>
+        <div class="ai-cta"><div class="ai-cta-icon">&#8250;</div> Go to Chat</div>
+      </div>
+    </a>
+    <a class="ai-card" href="#">
+      <div class="ai-card-img" style="background:#f0ede8;flex-direction:column;align-items:flex-start;padding:20px;gap:8px;">
+        <div style="background:#fff;border-radius:24px;padding:8px 16px;display:flex;align-items:center;gap:8px;width:60%;box-shadow:0 1px 4px rgba(0,0,0,.1);margin-bottom:8px;"><span style="font-size:13px;color:#555;">Search</span><span style="margin-left:auto;">🔍</span></div>
+        <div style="background:#fff;border-radius:8px;padding:8px 12px;font-size:12px;color:#333;width:70%;box-shadow:0 1px 4px rgba(0,0,0,.08);">📄 Documents</div>
+        <div style="background:#fff;border-radius:8px;padding:8px 12px;font-size:12px;color:#333;width:60%;box-shadow:0 1px 4px rgba(0,0,0,.08);">☁️ Files</div>
+        <div style="background:#fff;border-radius:8px;padding:8px 12px;font-size:12px;color:#333;width:65%;box-shadow:0 1px 4px rgba(0,0,0,.08);">👥 People</div>
+      </div>
+      <div class="ai-card-body">
+        <h3>Find what you need</h3>
+        <p>Get grounded answers and quickly find the information, files, and insights you need to get work done.</p>
+        <div class="ai-cta"><div class="ai-cta-icon">&#8250;</div> Go to Search</div>
+      </div>
+    </a>
+    <a class="ai-card" href="#">
+      <div class="ai-card-img" style="background:#f0ede8;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:24px;">
+        <img src="https://res.cdn.office.net/officehub/images/content/images/unauth-odc/word-icon-a0719c261c.svg" style="width:48px;height:48px;" alt="Word"/>
+        <img src="https://res.cdn.office.net/officehub/images/content/images/unauth-odc/excel-icon-058c14383a.svg" style="width:48px;height:48px;" alt="Excel"/>
+        <img src="https://res.cdn.office.net/officehub/images/content/images/unauth-odc/powerpoint-icon-1c34216af9.svg" style="width:48px;height:48px;" alt="PowerPoint"/>
+        <svg width="48" height="48" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#0078d4"/><text x="10" y="34" font-size="22" font-weight="700" fill="#fff" font-family="Segoe UI">O</text></svg>
+      </div>
+      <div class="ai-card-body">
+        <h3>Access your apps</h3>
+        <p>Type /apps to open Microsoft 365 apps like Word, Excel, PowerPoint, and more.</p>
+        <div class="ai-cta"><div class="ai-cta-icon">&#8250;</div> Open Apps</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section class="section">
+  <div class="section-title">Get Copilot apps</div>
+  <div class="dl-grid">
+    <div class="dl-box">
+      <div class="dl-img">
+        <img src="https://res.cdn.office.net/officehub/images/content/images/unauth-mcm/hero-desktop-download-1bb1ff82cb.png" alt="Desktop app"/>
+      </div>
+      <div class="dl-content">
+        <h3>Download for desktop</h3>
+        <p>Bring Copilot and your work together in a focused desktop experience.</p>
+        <div class="dl-btns">
+          <a class="dl-btn-black" href="https://go.microsoft.com/fwlink/?LinkId=2370902">For Windows</a>
+          <a class="dl-btn-black" href="https://go.microsoft.com/fwlink/?linkid=2325114">For Mac</a>
+        </div>
+      </div>
+    </div>
+    <div class="dl-box">
+      <div class="dl-img">
+        <img src="https://res.cdn.office.net/officehub/images/content/images/unauth-mcm/mcm-qr-code-c4d1fcceb0.png" alt="QR code"/>
+      </div>
+      <div class="dl-content">
+        <h3>Download on mobile</h3>
+        <p>Access your work with a mobile experience designed for flexibility.</p>
+        <div class="dl-btns">
+          <a href="https://apps.apple.com/us/app/microsoft-365-copilot/id541164041">
+            <img class="store-badge" src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store"/>
+          </a>
+          <a href="https://play.google.com/store/apps/details?id=com.microsoft.office.officehubrow">
+            <img class="store-badge" src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play"/>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="faq-top">
+    <div class="section-title" style="margin-bottom:0;">Did you know?</div>
+    <button class="faq-expand-btn" id="expandAllBtn" onclick="toggleAllFaq()">Expand all</button>
+  </div>
+  <div id="faqList">
+    <div class="faq-item">
+      <div class="faq-row" onclick="toggleFaq(0)">
+        <span class="faq-num">01/</span>
+        <span class="faq-q">Microsoft 365 brings your favorite apps together with Copilot</span>
+        <button class="faq-toggle" id="faqBtn0">+</button>
+      </div>
+      <div class="faq-answer open" id="faqAns0">Microsoft 365 includes familiar apps like Word, Excel, PowerPoint, Outlook, Teams, and OneDrive, plus Copilot experiences that help you create, find, summarize, and get things done across your work. With a Microsoft account, you can use <a href="#">Word</a>, <a href="#">Excel</a>, and <a href="#">PowerPoint</a> in your browser for free. For desktop apps, more storage, and additional premium features, you can explore Microsoft 365 plans.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-row" onclick="toggleFaq(1)">
+        <span class="faq-num">02/</span>
+        <span class="faq-q">Copilot helps you quickly get oriented and move work forward</span>
+        <button class="faq-toggle" id="faqBtn1">+</button>
+      </div>
+      <div class="faq-answer" id="faqAns1">Microsoft 365 Copilot Chat brings together work context through natural conversation, helping you understand priorities, catch up on progress, clarify intent, explore options, and identify next steps without breaking your flow.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-row" onclick="toggleFaq(2)">
+        <span class="faq-num">03/</span>
+        <span class="faq-q">Microsoft Copilot keeps work and personal experiences separate</span>
+        <button class="faq-toggle" id="faqBtn2">+</button>
+      </div>
+      <div class="faq-answer" id="faqAns2">Microsoft Copilot brings personal and work experiences into one simpler place while keeping them separate. Work stays work, and personal stays personal, so your work data, chats, files, and organizational protections remain separate from your personal Copilot experience.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-row" onclick="toggleFaq(3)">
+        <span class="faq-num">04/</span>
+        <span class="faq-q">Copilot works with Microsoft 365 security protections</span>
+        <button class="faq-toggle" id="faqBtn3">+</button>
+      </div>
+      <div class="faq-answer" id="faqAns3">Copilot is built with security, privacy, and compliance in mind. It respects existing permissions and enterprise protections, helping safeguard your content, accounts, and collaboration while you work.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-row" onclick="toggleFaq(4)">
+        <span class="faq-num">05/</span>
+        <span class="faq-q">You're in control of when you use AI</span>
+        <button class="faq-toggle" id="faqBtn4">+</button>
+      </div>
+      <div class="faq-answer" id="faqAns4">Copilot responds when you choose to use it. You stay in control of when and how you use AI features, and your existing privacy and security settings continue to apply.</div>
+    </div>
+  </div>
+  <div class="faq-footer-note">For more frequently asked questions, check out <a href="#">FAQ for Consumer</a> and <a href="#">FAQ for Commercial</a></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-globe">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="#555"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 1c.8 0 1.7.8 2.4 2.2A10.6 10.6 0 0 1 11 8c0 1.3-.2 2.5-.6 3.5-.7 1.7-1.7 2.5-2.4 2.5s-1.7-.8-2.4-2.5A10.6 10.6 0 0 1 5 8c0-1.3.2-2.5.6-3.5C6.3 2.8 7.2 2 8 2zm-5.9 5h2c.1-1.2.3-2.3.7-3.2A6 6 0 0 0 2.1 7zm9.8 0h2a6 6 0 0 0-2.7-3.2c.4.9.6 2 .7 3.2zm-9.8 2a6 6 0 0 0 2.7 3.2c-.4-.9-.6-2-.7-3.2h-2zm9.8 0h-2c-.1 1.2-.3 2.3-.7 3.2A6 6 0 0 0 11.9 9z"/></svg>
+      English (United States)
+    </div>
+    <a href="#">Privacy</a>
+    <a href="#">Consumer Health Policy</a>
+    <a href="#">Terms of Use</a>
+    <span>© Microsoft 2026</span>
+  </div>
+  <div class="footer-bottom">
+    * Copilot features require eligible Microsoft 365 subscriptions. Availability varies. <a href="#">Learn more</a>.<br/>
+    This site runs Microsoft Clarity for behavioral insights. By using this site, you consent to the collection and use of your data. <a href="#">Learn more here</a> and in our <a href="#">Privacy Statement</a>.
+  </div>
+</footer>
+
+<!-- SIGN-IN MODAL -->
+<div class="overlay" id="overlay" onclick="handleOverlay(event)">
+  <div class="signin-box">
+    <div class="step1" id="step1">
+      <div class="sbox-head">
+        <div class="sbox-msrow">
+          <svg width="20" height="20" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#f25022"/><rect x="12" y="1" width="10" height="10" fill="#7fba00"/><rect x="1" y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/></svg>
+          <span>Microsoft</span>
+        </div>
+        <h2>Sign in</h2>
+        <p>No account? <a href="#">Create one!</a></p>
+      </div>
+      <div class="sbox-body">
+        <div class="err" id="emailErr">Enter a valid email, phone, or Skype name.</div>
+        <input class="sbox-input" id="emailInput" type="text" placeholder="Email, phone, or Skype"/>
+        <div class="sbox-hint"><a href="#">Sign-in options</a></div>
+        <div class="sbox-legal">By signing in, you agree to the <a href="#">Microsoft Services Agreement</a> and <a href="#">Privacy Statement</a>.</div>
+        <div class="sbox-actions"><button class="sbox-next" onclick="goStep2()">Next</button></div>
+      </div>
+    </div>
+    <div class="step2" id="step2">
+      <div class="sbox-head">
+        <div class="sbox-msrow">
+          <svg width="20" height="20" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#f25022"/><rect x="12" y="1" width="10" height="10" fill="#7fba00"/><rect x="1" y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/></svg>
+          <span>Microsoft</span>
+        </div>
+        <h2>Enter password</h2>
+      </div>
+      <div class="sbox-body">
+        <div class="email-row" onclick="goBack()">
+          <div class="email-av" id="emailAv">A</div>
+          <span id="emailDisp">user@example.com</span>
+          <span style="margin-left:auto;color:#888;">&#8250;</span>
+        </div>
+        <div class="err" id="passErr">Your account or password is incorrect.</div>
+        <input class="sbox-input" id="passInput" type="password" placeholder="Password"/>
+        <div class="sbox-hint"><a href="#">Forgot password?</a></div>
+        <div class="sbox-legal">By signing in, you agree to the <a href="#">Microsoft Services Agreement</a>.</div>
+        <div class="sbox-actions">
+          <button class="sbox-back" onclick="goBack()">Back</button>
+          <button class="sbox-next" onclick="doSignin()">Sign in</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var carouselPage=0;
+function carouselNext(){
+  var extras=document.querySelectorAll('[data-extra]');
+  var first3=document.querySelectorAll('.prompt-card:not([data-extra])');
+  first3.forEach(c=>c.style.display='none');
+  extras.forEach(c=>c.style.display='flex');
+  document.getElementById('prevBtn').disabled=false;
+  document.getElementById('nextBtn').disabled=true;
+  document.getElementById('nextBtn').classList.remove('active');
+  document.getElementById('prevBtn').classList.add('active');
+  carouselPage=1;
+}
+function carouselPrev(){
+  var extras=document.querySelectorAll('[data-extra]');
+  var first3=document.querySelectorAll('.prompt-card:not([data-extra])');
+  first3.forEach(c=>c.style.display='flex');
+  extras.forEach(c=>c.style.display='none');
+  document.getElementById('prevBtn').disabled=true;
+  document.getElementById('nextBtn').disabled=false;
+  document.getElementById('prevBtn').classList.remove('active');
+  document.getElementById('nextBtn').classList.add('active');
+  carouselPage=0;
+}
+function toggleFaq(i){
+  var ans=document.getElementById('faqAns'+i);
+  var btn=document.getElementById('faqBtn'+i);
+  var open=ans.classList.contains('open');
+  ans.classList.toggle('open',!open);
+  btn.textContent=open?'+':'−';
+}
+function toggleAllFaq(){
+  var answers=document.querySelectorAll('.faq-answer');
+  var btns=document.querySelectorAll('.faq-toggle');
+  var anyOpen=[...answers].some(a=>a.classList.contains('open'));
+  answers.forEach(a=>a.classList.toggle('open',!anyOpen));
+  btns.forEach(b=>b.textContent=anyOpen?'+':'−');
+  document.getElementById('expandAllBtn').textContent=anyOpen?'Expand all':'Collapse all';
+}
+function openSignin(){document.getElementById('overlay').classList.add('show');setTimeout(()=>document.getElementById('emailInput').focus(),100);}
+function handleOverlay(e){if(e.target===document.getElementById('overlay'))document.getElementById('overlay').classList.remove('show');}
+function goStep2(){
+  var v=document.getElementById('emailInput').value.trim();
+  if(!v){document.getElementById('emailErr').classList.add('show');return;}
+  document.getElementById('emailErr').classList.remove('show');
+  document.getElementById('emailDisp').textContent=v;
+  document.getElementById('emailAv').textContent=v[0].toUpperCase();
+  document.getElementById('step1').classList.add('hide');
+  document.getElementById('step2').classList.add('show');
+  setTimeout(()=>document.getElementById('passInput').focus(),100);
+}
+function goBack(){
+  document.getElementById('step2').classList.remove('show');
+  document.getElementById('step1').classList.remove('hide');
+  document.getElementById('passErr').classList.remove('show');
+}
+function doSignin(){
+  if(!document.getElementById('passInput').value){document.getElementById('passErr').classList.add('show');return;}
+  alert('Signed in as: '+document.getElementById('emailDisp').textContent);
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')document.getElementById('overlay').classList.remove('show');
+  if(e.key==='Enter'){
+    if(document.getElementById('step2').classList.contains('show'))doSignin();
+    else if(document.getElementById('overlay').classList.contains('show'))goStep2();
+  }
+});
+</script>
+</body>
+</html>
